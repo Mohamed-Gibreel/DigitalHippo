@@ -24,7 +24,9 @@ const Cart = () => {
           aria-hidden="true"
           className="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
         />
-        <span className="ml-2 text-sm font-medium text-gray-700 group:hover:text-gray-800">0</span>
+        <span className="ml-2 text-sm font-medium text-gray-700 group:hover:text-gray-800">
+          0
+        </span>
       </SheetTrigger>
       <SheetContent className="flex w-full flex-col pre-0 sm:max-w-lg">
         <SheetHeader className="space-y-2.5 pr-6">
@@ -68,8 +70,15 @@ const Cart = () => {
           </>
         ) : (
           <div className="flex h-full flex-col items-center justify-center space-y-1">
-            <div aria-hidden="true" className="relative mb-4 h-60 w-60 text-muted-foreground">
-              <Image src={"/hippo-empty-cart.png"} alt="Empty Cart Image" fill />
+            <div
+              aria-hidden="true"
+              className="relative mb-4 h-60 w-60 text-muted-foreground"
+            >
+              <Image
+                src={"/hippo-empty-cart.png"}
+                alt="Empty Cart Image"
+                fill
+              />
             </div>
             <div className="text-xl font-semibold">Your Cart is empty</div>
             <SheetTrigger asChild>
