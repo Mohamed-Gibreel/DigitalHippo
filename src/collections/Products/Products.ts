@@ -52,7 +52,6 @@ export const Products: CollectionConfig = {
       hasMany: false,
       admin: {
         hidden: true,
-        condition: () => true,
       },
     },
     {
@@ -85,8 +84,8 @@ export const Products: CollectionConfig = {
       name: "product_files",
       label: "Product file(s)",
       type: "relationship",
-      required: true,
       relationTo: "product_files",
+      required: true,
       hasMany: false,
     },
     {
@@ -152,12 +151,13 @@ export const Products: CollectionConfig = {
       maxRows: 4,
       required: true,
       labels: {
-        singular: "Image",
-        plural: "Images",
+        singular: "Product Image",
+        plural: "Product Images",
       },
       fields: [
         {
-          name: "Image",
+          name: "image",
+          label: "Image",
           type: "upload",
           relationTo: "media",
           required: true,
