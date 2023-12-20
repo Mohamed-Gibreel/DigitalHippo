@@ -42,12 +42,7 @@ const ProductListing = ({ product, index }: Props) => {
   if (isVisible && product)
     return (
       <Link
-        href={{
-          pathname: "/product/:id",
-          query: {
-            slug: product.id,
-          },
-        }}
+        href={`/product/${product.id}`}
         className={cn("invisible h-full w-full cursor-pointer group/main", {
           "visible animate-in fade-in-5": isVisible,
         })}
