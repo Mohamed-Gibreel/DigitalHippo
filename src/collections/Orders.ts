@@ -24,7 +24,7 @@ export const Orders: CollectionConfig = {
   },
   fields: [
     {
-      name: "_isPoid",
+      name: "_isPaid",
       type: "checkbox",
       access: {
         read: ({ req }) => {

@@ -1,9 +1,10 @@
-import { User } from "@/payload-types";
+import { Product, User } from "../../payload-types";
 import { PRODUCT_CATEGORIES } from "../../config";
 import { Access, CollectionConfig } from "payload/types";
 import { BeforeChangeHook } from "payload/dist/collections/config/types";
+import { stripe } from "../../lib/stripe";
 
-const addUser: BeforeChangeHook = ({ req, data }) => {
+const addUser: BeforeChangeHook<Product> = ({ req, data }) => {
   const user = req.user as User | null;
   return {
     ...data,
@@ -41,7 +42,42 @@ export const Products: CollectionConfig = {
     update: isAdminOrHasAccessToProduct(),
   },
   hooks: {
-    beforeChange: [addUser],
+    beforeChange: [
+      addUser,
+      async (args) => {
+        if (args.operation === "create") {
+          const product = args.data as Product;
+          const stripeProduct = await stripe.products.create({
+            name: product.name,
+            default_price_data: {
+              currency: "AED",
+              // We multiple by 100 because unit_amount accepts price in cents.
+              unit_amount: Math.round(product.price * 100),
+            },
+          });
+          const updatedProduct: Product = {
+            ...product,
+            stripeId: stripeProduct.id,
+            priceId: stripeProduct.default_price as string,
+          };
+
+          return updatedProduct;
+        } else if (args.operation === "update") {
+          const product = args.data as Product;
+          const stripeProduct = await stripe.products.update(product.stripeId!, {
+            name: product.id,
+            default_price: product.priceId!,
+          });
+          const updatedProduct: Product = {
+            ...product,
+            stripeId: stripeProduct.id,
+            priceId: stripeProduct.default_price as string,
+          };
+
+          return updatedProduct;
+        }
+      },
+    ],
   },
   fields: [
     {
@@ -67,7 +103,7 @@ export const Products: CollectionConfig = {
     },
     {
       name: "price",
-      label: "Price in USD",
+      label: "Price in AED",
       min: 0,
       max: 1000,
       type: "number",

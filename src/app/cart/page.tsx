@@ -4,10 +4,13 @@ import { Button } from "@/components/ui/button";
 import { PRODUCT_CATEGORIES } from "@/config";
 import { useCart } from "@/hooks/use-cart";
 import { cn, formatPrice } from "@/lib/utils";
+import { trpc } from "@/trpc/client";
 import { Check, Loader2, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 type Props = {};
 
@@ -23,6 +26,22 @@ const CheckoutPage = ({}: Props) => {
   const fee = 1;
 
   const isCartEmpty = (items.length == 0 && isMounted) || !isMounted;
+
+  const router = useRouter();
+
+  const { mutate: createCheckoutSession, isLoading } = trpc.payment.createSession.useMutation({
+    onSuccess: ({ url, error }) => {
+      if (error) {
+        toast.error(error.toString());
+        return;
+      }
+      if (url) {
+        router.push(url);
+      }
+    },
+  });
+
+  const productIds = items.map(({ product }) => product.id);
 
   useEffect(() => {
     setIsMounted(true);
@@ -164,11 +183,16 @@ const CheckoutPage = ({}: Props) => {
             </div>
             <div className="mt-6">
               <Button
-                disabled={(isMounted && items.length == 0) || !isMounted}
+                disabled={
+                  (isMounted && items.length == 0) || (isMounted && isLoading) || !isMounted
+                }
                 className="w-full duration-150 transition-all"
                 size="lg"
-                onClick={() => {}}
+                onClick={() => {
+                  createCheckoutSession({ productIds: productIds });
+                }}
               >
+                {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-1.5" /> : null}
                 Checkout
               </Button>
             </div>
