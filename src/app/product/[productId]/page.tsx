@@ -38,7 +38,7 @@ const ProductPage = async ({ params }: Props) => {
     limit: 1,
     where: {
       id: {
-        equals: params.productId,
+        equals: productId,
       },
       approvedForSale: {
         equals: "approved",
@@ -108,7 +108,6 @@ const ProductPage = async ({ params }: Props) => {
               <ImageSlider urls={validUrls} />
             </div>
           </div>
-
           {/* Add to cart */}
           <div className="mt-10 lg:col-start-1 lg:rowstart-2 lg:max-w-lg lg:self-start">
             <div className="mt-10">
